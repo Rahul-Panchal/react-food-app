@@ -36,3 +36,35 @@
     transform: rotate(360deg);
   }
 }
+
+a:link { 
+  text-decoration: none; 
+} 
+a:hover { 
+  text-decoration: none !important; 
+} 
+
+/* mouse over link */
+a:hover {
+  color: hotpink;
+}
+
+/* selected link */
+a:active {
+  color: blue;
+}
+
+.container{
+  margin-top: 10px;
+  border: 1px #eff4f9 solid;
+  background-color: #eff4f91a;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.confirm-password-error{
+  /* .form-control{ */
+    border-bottom-color: rgb(255, 64, 64) !important;
+    border-bottom-width: medium !important;
+}
+

@@ -2,6 +2,12 @@
 
 # dependencies
 /node_modules
+node_modules/
+package-lock.json
+config/
+src-backup/
+/src-backup
+
 /.pnp
 .pnp.js
 
