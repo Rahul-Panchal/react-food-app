@@ -34,6 +34,10 @@ const AllRestaurantsList = (props) => {
         history.push("/edit-restaurant/"+restaurantId);
     }
 
+    const addFoodProductsAction = (restaurantId) => {
+        history.push("/select-food-products/"+restaurantId);
+    }
+
     useEffect(() => {
 
         console.log('restaurant Details')
@@ -60,7 +64,7 @@ const AllRestaurantsList = (props) => {
 
             <div className="card shadow mb-4">
                 <div className="card-header py-3">
-                    <h6 className="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                    <h6 className="m-0 font-weight-bold text-primary">All Restaurants List</h6>
                 </div>
                 <div className="card-body">
                     <div className="table-responsive">
@@ -133,6 +137,11 @@ const AllRestaurantsList = (props) => {
                                                             }}>
                                                             <i className="fas fa-trash"></i>
                                                         </button>
+
+                                                        <span className="btn btn-primary btn-circle btn-sm" onClick={() => addFoodProductsAction(restaurant._id)}>
+                                                            <i className="fas fa-plus-square" title="Add Food Products"></i>
+                                                        </span>
+
                                                     </td>
                                                 </tr>
                                             </LazyLoad>

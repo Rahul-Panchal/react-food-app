@@ -31,6 +31,8 @@ import AllFoodSubCategoriesList from '../components/food_sub_categories/AllFoodS
 import AddFoodProduct from '../components/food_products/AddFoodProduct';
 import EditFoodProduct from '../components/food_products/EditFoodProduct';
 import AllFoodProducts from '../components/food_products/AllFoodProducts';
+import SelectFoodProducts from '../components/food_products/SelectFoodProducts';
+import AddRestaurantFoodProduct from '../components/food_products/AddRestaurantFoodProduct';
 
 
 import Login from '../components/users/Login';
@@ -84,6 +86,9 @@ const Layout = (props) => {
                         <Route path="/add-food-product/:sub_category_id" component={AddFoodProduct} />
                         <Route path="/edit-food-product/:food_product_id" component={EditFoodProduct} />
                         <Route path="/all-food-products" component={AllFoodProducts} />
+                        {/* <Route path="/select-food-products" component={SelectFoodProducts} /> */}
+                        <Route path="/select-food-products/:restaurant_id" component={SelectFoodProducts} />
+                        <Route name="add-restaurant-food-product" path="/add-restaurant-food-product/:restaurant_id/:food_product_id" component={AddRestaurantFoodProduct}/>
 
                     </div>
                     <Footer />

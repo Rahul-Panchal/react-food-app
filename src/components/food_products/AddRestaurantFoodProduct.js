@@ -1,38 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import { useHistory } from 'react-router-dom';
-
-import DatePicker from "react-datepicker";
-
-// import { getAllUsersList } from '../../store/actions/useraction';
-// import { handleInputAction, validatePassword, getCountriesList, getStateList, getCitiesList, getStateCities, handleImageChange, handleDateChange, handleSubmitAction } from '../../store/actions/restaurantaction';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { retrieveAll as getAllFoodCategories } from '../../redux/features/foodCategorySlice';
 import { retrieveAll as getAllFoodSubCategories, foodSubCategoriesByCategoryId } from '../../redux/features/foodSubCategorySlice';
+import { retrieveAll as getAllRestaurantsList} from '../../redux/features/restaurantSlice';
 
-import { clearFormData, handleSubmitAction, updateInputDetails, handleImageChange, getFoodProductStatusList } from '../../redux/features/foodProductSlice';
+import { clearFormData, handleUpdateAction, updateInputDetails, handleImageChange, comparePassword, retrieveAll, retrieveOne, removeOne, getCountriesList, getStateList, getStateCities, getCitiesList, getFoodProductStatusList, getUserTypesList } from '../../redux/features/foodProductSlice';
 import { useForm } from 'react-hook-form';
 
 
-const AddFoodProduct = (props) => {
+const AddRestaurantFoodProduct = (props) => {
 
-  const [preview, setPreview] = useState();
+  // const [product_image, setProductImage] = useState()
+  const [preview, setPreview] = useState()
+
   const foodProductDetail = useSelector((state) => state.foodProduct.foodProductDetails)
+  const foodCategoryId = useSelector((state) => state.foodProduct.food_category_id);
   const isReadyForUpdate = useSelector((state) => state.foodProduct.isReadyForUpdate)
   const isImageUploaded = useSelector((state) => state.foodProduct.foodProductDetails.isImageUploaded)
   const product_image = useSelector((state) => state.foodProduct.foodProductDetails.product_image)
 
-
   const dispatch = useDispatch();
   const history = useHistory();
 
+  const { restaurant_id , food_product_id } = useParams();
+
   const allFoodCategoreis = useSelector((state) => state.foodCategory.allFoodCategoreis);
   const allFoodSubCategories = useSelector((state) => state.foodSubCategory.allFoodSubCategories);
-  const foodCategoryId = useSelector((state) => state.foodSubCategory.food_category_id);
+  const allRestaurantsList  = useSelector((state) => state.restaurant.allRestaurantsList);
 
   const foodProductStatusList = useSelector((state)=> state.foodProduct.foodProductStatusList);
-
-  // const { id } = useParams();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm(
     {
@@ -54,35 +52,59 @@ const AddFoodProduct = (props) => {
     }
   );
 
-    // create a preview as a side effect, whenever selected file is changed
-    useEffect(() => {
-      if (!isImageUploaded) {
-          setPreview(undefined)
-          return
-      }
-  
-      console.log('product_image :: ' + product_image)
-      console.log('isImageUploaded :: ' + isImageUploaded)
-  
-  
-      const objectUrl = URL.createObjectURL(product_image)
-      setPreview(objectUrl)
-  
-      // free memory when ever this component is unmounted
-      return () => URL.revokeObjectURL(objectUrl)
-    }, [isImageUploaded])
 
+  // create a preview as a side effect, whenever selected file is changed
+  useEffect(() => {
+    if (!isImageUploaded) {
+        setPreview(undefined)
+        return
+    }
+
+    console.log('product_image :: ' + product_image)
+    console.log('isImageUploaded :: ' + isImageUploaded)
+
+
+    const objectUrl = URL.createObjectURL(product_image)
+    setPreview(objectUrl)
+
+    // free memory when ever this component is unmounted
+    return () => URL.revokeObjectURL(objectUrl)
+}, [isImageUploaded])
+
+/*
+const onSelectFile = e => {
+    if (!e.target.files || e.target.files.length === 0) {
+        // setProductImage(undefined)
+        return
+    }
+
+    // I've kept this example simple by using the first image instead of multiple
+    setProductImage(e.target.files[0])
+    // console.log('setProductImage(e.target.files[0])');
+    // console.log(e.target.files[0]);
+
+    // dispatch(handleImageChange({ [e.target.name]: e.target.files[0] }))
+
+}
+*/
   useEffect(() => {
 
-    console.log('userDetail Details')
-    // console.log(userDetail);
+    console.log('food Product Details')
+    console.log(foodProductDetail);
     // console.log('id :: '+id);
+
+    console.log( 'restaurant_id :: '+ restaurant_id);
+    console.log( 'food_product_id  :: '+ food_product_id);
 
     console.log('isReadyForUpdate :: ' + isReadyForUpdate);
 
+
+    dispatch(getCountriesList());
+    dispatch(getStateList());
     dispatch(getAllFoodCategories());
     dispatch(getAllFoodSubCategories());
     dispatch(getFoodProductStatusList());
+    dispatch(getAllRestaurantsList());
 
     return () => {
       dispatch(clearFormData());
@@ -91,9 +113,10 @@ const AddFoodProduct = (props) => {
   }, []);
 
   const onSubmit = async (data) => {
-    console.log('userDetail submit form Details')
+    console.log('restaurants update form Details')
     console.log(data);
-    await dispatch(handleSubmitAction(data));
+    // data['_id'] = food_product_id;
+    await dispatch(handleUpdateAction(data));
     history.push("/all-food-products");
   };
 
@@ -107,17 +130,33 @@ const AddFoodProduct = (props) => {
           <form className="user" onSubmit={handleSubmit(onSubmit)}>
 
             <div class="form-header">
-              {"Add Food Product"}
+              {"Add Food Product Within Restaurant"}
             </div>
 
 
+            <div className="form-group row">
+              <div className="col-sm-3"><label><b>Restaurant Name</b></label></div>
+              <div className="col-sm-9">
+                {/* <input type="text" {...register('restaurant_name', { required: true})} name="restaurant_name" className="form-control" placeholder="Restaurant Name" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={restaurantDetail.restaurant_name} required /> */}
+
+                <select className="form-control" {...register('owner_id', { required: true})}  name="owner_id" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={restaurant_id} required>
+                  <option>Select Owner</option>
+                  {
+                    (allRestaurantsList) ?
+                      (allRestaurantsList.map((data) =>
+
+                        <option key={data._id} value={data._id} >{data.restaurant_name}</option>
+                      )) : null
+                  }
+                </select>
+              </div>
+            </div>
 
             <div className="form-group row">
               
               <div className="col-sm-3"><label><b>Food Category</b></label></div>
               <div className="col-sm-3">
-              
-              {/* <select className="form-control" {...register('food_category_id', { required: true})}  name="food_category_id" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={foodProductDetail.food_category_id} required> */}
+                {/* <select className="form-control" {...register('food_category_id', { required: true})}  name="food_sub_category_id" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={foodProductDetail.food_category_id} required> */}
                 <select className="form-control" {...register('food_category_id', { required: true})}  name="food_category_id" onChange={(e) => dispatch(foodSubCategoriesByCategoryId(e.target.value))} value={foodCategoryId} required>
                   <option>Select Food Category</option>
                   {
@@ -133,7 +172,7 @@ const AddFoodProduct = (props) => {
               <div className="col-sm-3"><label><b>Food Sub Category</b></label></div>
               <div className="col-sm-3">
                 <select className="form-control" {...register('food_sub_category_id', { required: true})}  name="food_sub_category_id" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={foodProductDetail.food_sub_category_id} required>
-                  <option>Select Food Sub Category</option>
+                <option>Select Food Sub Category</option>
                   {
                     (allFoodSubCategories) ?
                       (allFoodSubCategories.map((data) =>
@@ -178,21 +217,20 @@ const AddFoodProduct = (props) => {
             </div>
 
             <div className="form-group row">
-              <div className="col-sm-3"><label><b>Product Image</b></label></div>
+              <div className="col-sm-3"><label><b>Update Product Image</b></label></div>
               <div className="col-sm-3">
-                <div className="custom-file">
-                  {/* <input type="file" className="custom-file-input" id="customFile" name="product_image" onChange={(e) => handleImageChange(e.target)} /> */}
-                  <input type="file" className="custom-file-input" id="customFile" {...register('product_image', { required: true})} name="product_image" onChange={(e) => dispatch(handleImageChange({ [e.target.name]: e.target.files[0] }))} />
-                  <label className="custom-file-label" htmlFor="customFile">Choose file</label>
-                </div>
+                {/* <input type='file' {...register('product_image', { required: false})}  name="product_image" onChange={onSelectFile} /> */}
+                <input type="file" className="form-control custom-file-input" id="customFile" {...register('product_image', { required: false})} name="product_image" onChange={(e) => dispatch(handleImageChange({ [e.target.name]: e.target.files[0] }))} />
+                <label className="custom-file-label" htmlFor="customFile">Choose file</label>
               </div>
 
-              <div className="col-sm-3"><label><b>Product Image Preview</b></label></div>
+              <div className="col-sm-3"><label><b>Product Image</b></label></div>
               <div className="col-sm-3">
-                {isImageUploaded && <img src={preview} alt={preview} width="75" height="75"/>}
+                {isImageUploaded ? <img src={preview} alt={preview} width="75" height="75"/> : <img src={`http://localhost:8081/images/product_images/`+foodProductDetail.product_image}  alt={"No Image"} width="75" height="75"/> }
               </div>
 
             </div>
+
 
             <button type="submit" className="btn btn-info">{"Update"}</button>
 
@@ -205,4 +243,4 @@ const AddFoodProduct = (props) => {
 
 }
 
-export default AddFoodProduct;
+export default AddRestaurantFoodProduct;

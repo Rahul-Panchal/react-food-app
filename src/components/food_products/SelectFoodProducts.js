@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { retrieveAll as getAllUsersList } from '../../redux/features/userSlice';
 
 import { retrieveAll as getAllFoodProducts, clearFormData, handleSubmitAction, updateInputDetails, handleImageChange, comparePassword, retrieveAll, retrieveOne, removeOne, getCountriesList, getStateList, getStateCities, getCitiesList, getUserStatusList, getUserTypesList } from '../../redux/features/foodProductSlice';
 import LazyLoad from 'react-lazyload';
 
-const AllFoodProducts = (props) => {
+const SelectFoodProducts = (props) => {
 
 
     const Loading = () => {
@@ -28,13 +28,21 @@ const AllFoodProducts = (props) => {
         history.push("/edit-food-product/"+foodProductId);
     }
 
+    
+    const { restaurant_id } = useParams();
+
+    const addProductWithRestaurantAction = (foodProductId) => {
+        dispatch(retrieveOne(foodProductId));
+        history.push("/add-restaurant-food-product/"+restaurant_id+"/"+foodProductId);
+    }
+
     useEffect(() => {
 
         console.log('foodProduct Details')
         // console.log(userDetail);
         // console.log('id :: '+id);
     
-        // console.log('isReadyForUpdate :: ' + isReadyForUpdate);
+        console.log('restaurant_id :: ' + restaurant_id);
     
     
         dispatch(getCountriesList());
@@ -54,7 +62,7 @@ const AllFoodProducts = (props) => {
 
             <div className="card shadow mb-4">
                 <div className="card-header py-3">
-                    <h6 className="m-0 font-weight-bold text-primary">All Food Prodcuts</h6>
+                    <h6 className="m-0 font-weight-bold text-primary">Select Food Products For Restaurant</h6>
                 </div>
                 <div className="card-body">
                     <div className="table-responsive">
@@ -86,7 +94,7 @@ const AllFoodProducts = (props) => {
                                                     </td>
                                                     <td>{foodProduct.status ? "Active" : "Not Active"}</td>
                                                     <td>
-                                                        <span className="btn btn-primary btn-circle btn-sm" onClick={() => handleEditAction(foodProduct._id)}>
+                                                        {/* <span className="btn btn-primary btn-circle btn-sm" onClick={() => handleEditAction(foodProduct._id)}>
                                                             <i className="fas fa-pencil-alt"></i>
                                                         </span>
 
@@ -99,7 +107,12 @@ const AllFoodProducts = (props) => {
                                                                 }
                                                             }}>
                                                             <i className="fas fa-trash"></i>
-                                                        </button>
+                                                        </button> */}
+
+                                                        <span className="btn btn-primary btn-circle btn-sm" onClick={() => addProductWithRestaurantAction(foodProduct._id)}>
+                                                            <i className="fas fa-plus-square" title="Add Food Product Within Restaurant"></i>
+                                                        </span>
+
                                                     </td>
                                                 </tr>
                                             </LazyLoad>
@@ -115,4 +128,4 @@ const AllFoodProducts = (props) => {
 
 }
 
-export default AllFoodProducts;
+export default SelectFoodProducts;
