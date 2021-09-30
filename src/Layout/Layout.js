@@ -19,6 +19,7 @@ import AllUsersList from '../components/users/AllUsersList';
 import AllRestaurantsList from '../components/restaurant/AllRestaurantsList';
 import AddRestaurant from '../components/restaurant/AddRestaurant';
 import EditRestaurant from '../components/restaurant/EditRestaurant';
+import RestaurantFoodProducts from '../components/restaurant/RestaurantFoodProducts';
 
 import AddFoodCategory from '../components/food_categories/AddFoodCategory';
 import AllFoodCategoriesList from '../components/food_categories/AllFoodCategoriesList';
@@ -33,6 +34,7 @@ import EditFoodProduct from '../components/food_products/EditFoodProduct';
 import AllFoodProducts from '../components/food_products/AllFoodProducts';
 import SelectFoodProducts from '../components/food_products/SelectFoodProducts';
 import AddRestaurantFoodProduct from '../components/food_products/AddRestaurantFoodProduct';
+
 
 
 import Login from '../components/users/Login';
@@ -73,6 +75,8 @@ const Layout = (props) => {
                         <Route path="/add-restaurant" component={AddRestaurant} />
                         <Route path="/restaurants-list" component={AllRestaurantsList} />
                         <Route exact path="/edit-restaurant/:id" component={EditRestaurant} />
+                        <Route path="/restaurant-product-list/:restaurant_id" component={RestaurantFoodProducts} />
+
                         <Route path="/add-food-category" component={AddFoodCategory} />
                         <Route path="/all-food-categories" component={AllFoodCategoriesList} />
                         <Route exact path="/edit-food-category/:id" component={EditFoodCategory} />

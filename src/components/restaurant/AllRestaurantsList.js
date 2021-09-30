@@ -38,6 +38,11 @@ const AllRestaurantsList = (props) => {
         history.push("/select-food-products/"+restaurantId);
     }
 
+    const viewFoodProductsAction = (restaurantId) => {
+        history.push("/restaurant-product-list/"+restaurantId);
+    }
+
+
     useEffect(() => {
 
         console.log('restaurant Details')
@@ -141,6 +146,12 @@ const AllRestaurantsList = (props) => {
                                                         <span className="btn btn-primary btn-circle btn-sm" onClick={() => addFoodProductsAction(restaurant._id)}>
                                                             <i className="fas fa-plus-square" title="Add Food Products"></i>
                                                         </span>
+
+                                                        <span className="btn btn-primary btn-circle btn-sm" onClick={() => viewFoodProductsAction(restaurant._id)}>
+                                                            <i className="fa fa-list-ol" title="view Restaurant Food Products"></i>
+                                                        </span>
+
+
 
                                                     </td>
                                                 </tr>

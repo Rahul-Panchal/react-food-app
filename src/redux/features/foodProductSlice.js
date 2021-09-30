@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 
 import FoodProductServices from '../../store/HttpTransport/Services/FoodProductServices';
+import RestaurantServices from '../../store/HttpTransport/Services/RestaurantServices';
 
 /**
  * using thunk with async and await
@@ -30,6 +31,21 @@ import FoodProductServices from '../../store/HttpTransport/Services/FoodProductS
  export const retrieveOne = createAsyncThunk('foodProduct/retrieveOne', async (id) => {
 
     const {data} = await FoodProductServices.get(id);
+
+    console.log('retrieveOne-response')
+    console.log(data)
+    return data;
+
+});
+
+/**
+ * Get All food products as per restaurant id
+ * 
+ * using thunk with async and await
+ */
+ export const getRestaurantFoodProducts = createAsyncThunk('foodProduct/getRestaurantFoodProducts', async (id) => {
+
+    const {data} = await RestaurantServices.getAllFoodProducts(id);
 
     console.log('retrieveOne-response')
     console.log(data)
@@ -270,6 +286,13 @@ const foodProductSlice = createSlice({
     extraReducers : {
         [retrieveAll.fulfilled]: (state, action) => {
             console.log('retrieveAll-extra-reducers')
+            console.log(action.payload)
+
+            state.allFoodProducts = action.payload;
+            state.isLoaded =  true;
+        },
+        [getRestaurantFoodProducts.fulfilled]: (state, action) => {
+            console.log('getRestaurantFoodProducts-extra-reducers')
             console.log(action.payload)
 
             state.allFoodProducts = action.payload;

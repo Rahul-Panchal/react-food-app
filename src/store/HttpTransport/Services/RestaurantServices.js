@@ -8,6 +8,10 @@ const get = id => {
     return http.get(`/restaurant-detail/restaurant-list/${id}`);
 };
 
+const getAllFoodProducts = id => {
+    return http.get(`/restaurant-detail/restaurant-product-list/${id}`);
+};
+
 const create = data => {
 
     
@@ -44,6 +48,7 @@ const findByTitle = title => {
 const RestaurantServices = {
     getAll,
     get,
+    getAllFoodProducts,
     create,
     update,
     remove,
