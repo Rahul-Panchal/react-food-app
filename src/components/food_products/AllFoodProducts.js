@@ -78,7 +78,7 @@ const AllFoodProducts = (props) => {
                                             <LazyLoad key={foodProduct._id} placeholder={Loading()}>
                                                 <tr key={foodProduct._id}>
                                                     <td>{++index + '.'}</td>
-                                                    <td>{foodProduct.food_category_id.name}</td>
+                                                    <td>{foodProduct.food_sub_category_id.food_category_id.name}</td>
                                                     <td>{foodProduct.food_sub_category_id.name}</td>
                                                     <td>{foodProduct.product_name}</td>
                                                     <td>

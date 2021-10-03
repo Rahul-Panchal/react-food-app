@@ -31,15 +31,17 @@ import foodCategoryReducer from './features/foodCategorySlice';
 import foodSubCategoryReducer from './features/foodSubCategorySlice';
 import restaurantReducer from './features/restaurantSlice';
 import foodProductReducer from './features/foodProductSlice';
+import restaurantProductReducer from './features/restaurantProductSlice';
 
 export default configureStore({
     reducer : {
-        user            : userReducer,
-        login           : loginReducer,
-        foodCategory    : foodCategoryReducer,
-        foodSubCategory : foodSubCategoryReducer,
-        foodProduct     : foodProductReducer,
-        restaurant      : restaurantReducer,
+        user                : userReducer,
+        login               : loginReducer,
+        foodCategory        : foodCategoryReducer,
+        foodSubCategory     : foodSubCategoryReducer,
+        foodProduct         : foodProductReducer,
+        restaurant          : restaurantReducer,
+        restaurantProduct   : restaurantProductReducer
     } ,
     middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

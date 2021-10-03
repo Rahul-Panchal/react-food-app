@@ -10,7 +10,7 @@ import DatePicker from "react-datepicker";
 import { retrieveAll as getAllFoodCategories } from '../../redux/features/foodCategorySlice';
 import { retrieveAll as getAllFoodSubCategories, foodSubCategoriesByCategoryId } from '../../redux/features/foodSubCategorySlice';
 
-import { clearFormData, handleSubmitAction, updateInputDetails, handleImageChange, getFoodProductStatusList } from '../../redux/features/foodProductSlice';
+import { clearFormData, handleSubmitAction, updateInputDetails, handleImageChange, getFoodProductStatusList, getFoodProductPlateSize } from '../../redux/features/foodProductSlice';
 import { useForm } from 'react-hook-form';
 
 
@@ -31,6 +31,7 @@ const AddFoodProduct = (props) => {
   const foodCategoryId = useSelector((state) => state.foodSubCategory.food_category_id);
 
   const foodProductStatusList = useSelector((state)=> state.foodProduct.foodProductStatusList);
+  const foodProductPlateSize = useSelector((state)=> state.foodProduct.foodProductPlateSize);
 
   // const { id } = useParams();
 
@@ -46,7 +47,7 @@ const AddFoodProduct = (props) => {
         //'product_price'         : "",
         //'product_disclaimer'    : "",
         'product_image'         : "",// [Array Object Multiple]
-        //'product_weight_desc'   : "",// [Half Plate / Full Plate ( Need help Input text or create separate table ) ]
+        'plate_status'          : "",// [Application/ Not Applicable ( Need help Input text or create separate table ) ]
         'status'                : "",// [0/1]
         //'product_best_offer'    : "",// [0/1]
         //'product_top_selling'   : "",// [0/1]      },
@@ -83,6 +84,8 @@ const AddFoodProduct = (props) => {
     dispatch(getAllFoodCategories());
     dispatch(getAllFoodSubCategories());
     dispatch(getFoodProductStatusList());
+
+    dispatch(getFoodProductPlateSize());
 
     return () => {
       dispatch(clearFormData());
@@ -169,6 +172,26 @@ const AddFoodProduct = (props) => {
               </div>
             
             </div>
+
+            <div className="form-group row">
+              
+              <div className="col-sm-3"><label><b>Product Plate Status</b></label></div>
+              <div className="col-sm-3">
+                <select className="form-control" {...register('plate_status', { required: false })} name="plate_status" onChange={(e)=>dispatch(updateInputDetails({[e.target.name] : e.target.value}))} value={foodProductDetail.plate_status}>
+                  <option>Select Plate Status</option>
+                  {
+                    (foodProductPlateSize) ?
+                      (foodProductPlateSize.map((data) =>
+                        // (user_type == data.id) ?
+                        <option key={data.id} value={data.id} >{data.name}</option>
+                        // :null
+                      )) : null
+                  }
+                </select>
+              </div>
+            
+            </div>
+
 
             <div className="form-group row">
               <div className="col-sm-3"><label><b>Product Description</b></label></div>

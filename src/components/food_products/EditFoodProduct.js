@@ -5,7 +5,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { retrieveAll as getAllFoodCategories } from '../../redux/features/foodCategorySlice';
 import { retrieveAll as getAllFoodSubCategories, foodSubCategoriesByCategoryId } from '../../redux/features/foodSubCategorySlice';
 
-import { clearFormData, handleUpdateAction, updateInputDetails, handleImageChange, comparePassword, retrieveAll, retrieveOne, removeOne, getCountriesList, getStateList, getStateCities, getCitiesList, getFoodProductStatusList, getUserTypesList } from '../../redux/features/foodProductSlice';
+import { clearFormData, handleUpdateAction, updateInputDetails, handleImageChange, comparePassword, retrieveAll, retrieveOne, removeOne, getCountriesList, getStateList, getStateCities, getCitiesList, getFoodProductStatusList, getFoodProductPlateSize, getUserTypesList } from '../../redux/features/foodProductSlice';
 import { useForm } from 'react-hook-form';
 
 
@@ -30,6 +30,7 @@ const EditFoodProduct = (props) => {
  
 
   const foodProductStatusList = useSelector((state)=> state.foodProduct.foodProductStatusList);
+  const foodProductPlateSize = useSelector((state)=> state.foodProduct.foodProductPlateSize);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm(
     {
@@ -43,7 +44,7 @@ const EditFoodProduct = (props) => {
         //'product_price'         : "",
         //'product_disclaimer'    : "",
         'product_image'         : "",// [Array Object Multiple]
-        //'product_weight_desc'   : "",// [Half Plate / Full Plate ( Need help Input text or create separate table ) ]
+        'plate_status'          : "",// [Application/ Not Applicable  ( Need help Input text or create separate table ) ]
         'status'                : "",// [0/1]
         //'product_best_offer'    : "",// [0/1]
         //'product_top_selling'   : "",// [0/1]      },
@@ -100,6 +101,8 @@ const onSelectFile = e => {
     dispatch(getAllFoodCategories());
     dispatch(getAllFoodSubCategories());
     dispatch(getFoodProductStatusList());
+
+    dispatch(getFoodProductPlateSize());
 
     return () => {
       dispatch(clearFormData());
@@ -177,6 +180,25 @@ const onSelectFile = e => {
                   {
                     (foodProductStatusList) ?
                       (foodProductStatusList.map((data) =>
+                        // (user_type == data.id) ?
+                        <option key={data.id} value={data.id} >{data.name}</option>
+                        // :null
+                      )) : null
+                  }
+                </select>
+              </div>
+            
+            </div>
+
+            <div className="form-group row">
+              
+              <div className="col-sm-3"><label><b>Product Plate Status</b></label></div>
+              <div className="col-sm-3">
+                <select className="form-control" {...register('plate_status', { required: false })} name="plate_status" onChange={(e)=>dispatch(updateInputDetails({[e.target.name] : e.target.value}))} value={foodProductDetail.plate_status}>
+                  <option>Select Plate Status</option>
+                  {
+                    (foodProductPlateSize) ?
+                      (foodProductPlateSize.map((data) =>
                         // (user_type == data.id) ?
                         <option key={data.id} value={data.id} >{data.name}</option>
                         // :null

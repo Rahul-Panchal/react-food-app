@@ -121,7 +121,19 @@ export const getFoodProductStatusList = createAsyncThunk('foodProduct/getFoodPro
         { id: true, name: 'Active'},
         { id: false, name: 'Not Active'},
     ];
-    return foodProductStatusList
+    return foodProductStatusList;
+});
+
+/**
+ * using thunk with async and await
+ */
+ export const getFoodProductPlateSize = createAsyncThunk('foodProduct/getFoodProductPlateSize', async (id) => {
+    
+    const foodProductPlateSize = [
+        { id: true, name: 'Applicable'},
+        { id: false, name: 'Not Applicable'},
+    ];
+    return foodProductPlateSize;
 });
 
 /**
@@ -231,7 +243,7 @@ const foodProductSlice = createSlice({
             // 'product_price'         : "",
             // 'product_disclaimer'    : "",
             'product_image'         : "",// [Array Object Multiple]
-            // 'product_weight_desc'   : "",// [Half Plate / Full Plate ( Need help Input text or create separate table ) ]
+            'plate_status'          : "",// [Applicable(Half Plate / Full Plate) / Not Applicable(breads) ( Need help Input text or create separate table ) ]
             'status'                : "",// [0/1]
             // 'product_best_offer'    : "",// [0/1]
             // 'product_top_selling'   : "",// [0/1]
@@ -275,7 +287,7 @@ const foodProductSlice = createSlice({
                 // 'product_price'         : "",
                 // 'product_disclaimer'    : "",
                 'product_image'         : "",// [Array Object Multiple]
-                // 'product_weight_desc'   : "",// [Half Plate / Full Plate ( Need help Input text or create separate table ) ]
+                'plate_status'          : "",// [Applicable(Half Plate / Full Plate) / Not Applicable(breads)  ( Need help Input text or create separate table ) ]
                 'status'                : "",// [0/1]
                 // 'product_best_offer'    : "",// [0/1]
                 // 'product_top_selling'   : "",
@@ -359,6 +371,10 @@ const foodProductSlice = createSlice({
         },
         [getFoodProductStatusList.fulfilled] : (state, action) => {
             state.foodProductStatusList = action.payload;
+            state.isLoaded =  true;
+        },
+        [getFoodProductPlateSize.fulfilled] : (state, action) => {
+            state.foodProductPlateSize = action.payload;
             state.isLoaded =  true;
         },
         [getUserTypesList.fulfilled] : (state, action) => {

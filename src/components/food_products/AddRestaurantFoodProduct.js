@@ -6,8 +6,13 @@ import { retrieveAll as getAllFoodCategories } from '../../redux/features/foodCa
 import { retrieveAll as getAllFoodSubCategories, foodSubCategoriesByCategoryId } from '../../redux/features/foodSubCategorySlice';
 import { retrieveAll as getAllRestaurantsList} from '../../redux/features/restaurantSlice';
 
-import { clearFormData, handleUpdateAction, updateInputDetails, handleImageChange, comparePassword, retrieveAll, retrieveOne, removeOne, getCountriesList, getStateList, getStateCities, getCitiesList, getFoodProductStatusList, getUserTypesList } from '../../redux/features/foodProductSlice';
+import { retrieveOne as getFoodProductDetails , clearFormData as clearFoodProductData, getFoodProductPlateSize} from '../../redux/features/foodProductSlice';
+
+import { clearFormData, handleSubmitAction, updateInputDetails, handleImageChange, retrieveAll, retrieveOne, removeOne, getFoodProductStatusList, getUserTypesList } from '../../redux/features/restaurantProductSlice';
+
 import { useForm } from 'react-hook-form';
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 
 const AddRestaurantFoodProduct = (props) => {
@@ -15,11 +20,14 @@ const AddRestaurantFoodProduct = (props) => {
   // const [product_image, setProductImage] = useState()
   const [preview, setPreview] = useState()
 
+  const restaurantFoodProductDetail = useSelector((state) => state.restaurantProduct.foodProductDetails)
+
   const foodProductDetail = useSelector((state) => state.foodProduct.foodProductDetails)
+
   const foodCategoryId = useSelector((state) => state.foodProduct.food_category_id);
   const isReadyForUpdate = useSelector((state) => state.foodProduct.isReadyForUpdate)
-  const isImageUploaded = useSelector((state) => state.foodProduct.foodProductDetails.isImageUploaded)
-  const product_image = useSelector((state) => state.foodProduct.foodProductDetails.product_image)
+  const isImageUploaded = useSelector((state) => state.restaurantProduct.foodProductDetails.isImageUploaded)
+  const product_image = useSelector((state) => state.restaurantProduct.foodProductDetails.product_image)
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -30,24 +38,21 @@ const AddRestaurantFoodProduct = (props) => {
   const allFoodSubCategories = useSelector((state) => state.foodSubCategory.allFoodSubCategories);
   const allRestaurantsList  = useSelector((state) => state.restaurant.allRestaurantsList);
 
-  const foodProductStatusList = useSelector((state)=> state.foodProduct.foodProductStatusList);
+  const foodProductStatusList = useSelector((state)=> state.restaurantProduct.foodProductStatusList);
+  const foodProductPlateSize = useSelector((state)=> state.foodProduct.foodProductPlateSize);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm(
     {
       defaultValues: {
-        '_id'                   : "",
-        'food_category_id'      : "",
-        'food_sub_category_id'  : "",
-        'product_name'          : "",
-       // 'product_taste_type'    : "",// [ Veg/Non Veg ]
-        'product_description'   : "",
-        //'product_price'         : "",
-        //'product_disclaimer'    : "",
-        'product_image'         : "",// [Array Object Multiple]
-        //'product_weight_desc'   : "",// [Half Plate / Full Plate ( Need help Input text or create separate table ) ]
-        'status'                : "",// [0/1]
-        //'product_best_offer'    : "",// [0/1]
-        //'product_top_selling'   : "",// [0/1]      },
+        _id                     : "",
+        restaurant_detail_id    : "",
+        food_product_id         : "",
+        product_discount        : "",
+        half_plate_price        : "",
+        full_plate_price        : "",
+        product_price           : "",
+        product_image           : "",
+        status                  : "", 
       }
     }
   );
@@ -99,25 +104,32 @@ const onSelectFile = e => {
     console.log('isReadyForUpdate :: ' + isReadyForUpdate);
 
 
-    dispatch(getCountriesList());
-    dispatch(getStateList());
     dispatch(getAllFoodCategories());
     dispatch(getAllFoodSubCategories());
     dispatch(getFoodProductStatusList());
     dispatch(getAllRestaurantsList());
+    dispatch(getFoodProductPlateSize());
+
+    dispatch(getFoodProductDetails(food_product_id));
 
     return () => {
       dispatch(clearFormData());
+      dispatch(clearFoodProductData());
     }
 
   }, []);
 
   const onSubmit = async (data) => {
-    console.log('restaurants update form Details')
+    console.log('restaurants food product form Details')
     console.log(data);
-    // data['_id'] = food_product_id;
-    await dispatch(handleUpdateAction(data));
-    history.push("/all-food-products");
+    data['restaurant_detail_id'] = restaurant_id;
+    data['food_product_id'] = food_product_id;
+    console.log(data);
+    dispatch(handleSubmitAction(data));
+
+    await sleep(1000);
+
+    history.push("/restaurant-product-list/"+restaurant_id);
   };
 
   return (
@@ -139,8 +151,8 @@ const onSelectFile = e => {
               <div className="col-sm-9">
                 {/* <input type="text" {...register('restaurant_name', { required: true})} name="restaurant_name" className="form-control" placeholder="Restaurant Name" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={restaurantDetail.restaurant_name} required /> */}
 
-                <select className="form-control" {...register('owner_id', { required: true})}  name="owner_id" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={restaurant_id} required>
-                  <option>Select Owner</option>
+                <select className="form-control" {...register('restaurant_detail_id', { required: true})}  name="restaurant_detail_id" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={restaurant_id} required>
+                  <option>Select Restaurant</option>
                   {
                     (allRestaurantsList) ?
                       (allRestaurantsList.map((data) =>
@@ -217,6 +229,23 @@ const onSelectFile = e => {
             </div>
 
             <div className="form-group row">
+              <div className="col-sm-3"><label><b>Product Plate Status</b></label></div>
+              <div className="col-sm-3">
+                <select className="form-control" {...register('plate_status', { required: false })} name="plate_status" onChange={(e)=>dispatch(updateInputDetails({[e.target.name] : e.target.value}))} value={foodProductDetail.plate_status}>
+                  <option>Select Plate Status</option>
+                  {
+                    (foodProductPlateSize) ?
+                      (foodProductPlateSize.map((data) =>
+                        // (user_type == data.id) ?
+                        <option key={data.id} value={data.id} >{data.name}</option>
+                        // :null
+                      )) : null
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div className="form-group row">
               <div className="col-sm-3"><label><b>Update Product Image</b></label></div>
               <div className="col-sm-3">
                 {/* <input type='file' {...register('product_image', { required: false})}  name="product_image" onChange={onSelectFile} /> */}
@@ -231,8 +260,45 @@ const onSelectFile = e => {
 
             </div>
 
+            {
+            (foodProductDetail.plate_status) ? 
 
-            <button type="submit" className="btn btn-info">{"Update"}</button>
+              <div>
+                <div className="form-group row">
+                  <div className="col-sm-3"><label><b>Half Plate Price</b></label></div>
+                  <div className="col-sm-3">
+                    <input type="text" className="form-control" placeholder="Half Plate Price" {...register('half_plate_price', { required: false})}  name="half_plate_price" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={restaurantFoodProductDetail.half_plate_price} />
+                  </div>
+                  <div className="col-sm-3"><label><b>Full Plate Price</b></label></div>
+                  <div className="col-sm-3">
+                    <input type="text" className="form-control" placeholder="Full Plate Price" {...register('full_plate_price', { required: false})}  name="full_plate_price" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={restaurantFoodProductDetail.full_plate_price} />
+                  </div>
+                </div>
+                  
+                <div className="form-group row">
+                  <div className="col-sm-3"><label><b>Product Discount</b></label></div>
+                  <div className="col-sm-3">
+                    <input type="text" className="form-control" placeholder="Product Discount" {...register('product_discount', { required: false})}  name="product_discount" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={restaurantFoodProductDetail.product_discount} />
+                  </div>
+                </div>
+              </div>
+
+            :
+
+              <div className="form-group row">
+                <div className="col-sm-3"><label><b>Product Price</b></label></div>
+                <div className="col-sm-3">
+                  <input type="text" className="form-control" placeholder="Product Price" {...register('product_price', { required: false})}  name="product_price" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={restaurantFoodProductDetail.product_price} />
+                </div>
+                <div className="col-sm-3"><label><b>Product Discount</b></label></div>
+                <div className="col-sm-3">
+                  <input type="text" className="form-control" placeholder="Product Discount" {...register('product_discount', { required: false})}  name="product_discount" onChange={(e) => dispatch(updateInputDetails({ [e.target.name]: e.target.value }))} value={restaurantFoodProductDetail.product_discount} />
+                </div>
+              </div>
+            }
+
+
+            <button type="submit" className="btn btn-info">{"Submit"}</button>
 
           </form>
         </div>

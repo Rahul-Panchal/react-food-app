@@ -5,7 +5,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { retrieveAll as getAllUsersList } from '../../redux/features/userSlice';
 
 import { retrieveOne as getRestaurantDetail} from '../../redux/features/restaurantSlice';
-import { getRestaurantFoodProducts as getAllFoodProducts, clearFormData, handleSubmitAction, updateInputDetails, handleImageChange, comparePassword, retrieveAll, retrieveOne, removeOne, getCountriesList, getStateList, getStateCities, getCitiesList, getUserStatusList, getUserTypesList } from '../../redux/features/foodProductSlice';
+import { getRestaurantFoodProducts as getAllFoodProducts, clearFormData, handleSubmitAction, updateInputDetails, handleImageChange, retrieveAll, retrieveOne, removeOne } from '../../redux/features/restaurantProductSlice';
 import LazyLoad from 'react-lazyload';
 
 const RestaurantFoodProducts = (props) => {
@@ -22,7 +22,7 @@ const RestaurantFoodProducts = (props) => {
     const dispatch = useDispatch();
     const history = useHistory();
 
-    const allFoodProducts  = useSelector((state) => state.foodProduct.allFoodProducts);
+    const allFoodProducts  = useSelector((state) => state.restaurantProduct.allFoodProducts);
     const restaurantDetail = useSelector((state) => state.restaurant.restaurantDetails)
 
     const handleEditAction = (foodProductId) =>{
@@ -30,7 +30,7 @@ const RestaurantFoodProducts = (props) => {
         history.push("/edit-food-product/"+foodProductId);
     }
 
-    const {restaurant_id}  =useParams ();
+    const {restaurant_id}  = useParams ();
 
     useEffect(() => {
 
@@ -41,18 +41,16 @@ const RestaurantFoodProducts = (props) => {
         // console.log('isReadyForUpdate :: ' + isReadyForUpdate);
     
     
-        dispatch(getCountriesList());
-        dispatch(getStateList());
+
         dispatch(getAllUsersList());
         dispatch(getRestaurantDetail(restaurant_id))
         dispatch(getAllFoodProducts(restaurant_id));
-        dispatch(getCitiesList());
     
-        return () => {
-          dispatch(clearFormData());
-        }
+        // return () => {
+        //   dispatch(clearFormData());
+        // }
     
-      }, []);
+    }, [restaurant_id]);
 
     return (
         <div className="container-fluid">
@@ -87,7 +85,7 @@ const RestaurantFoodProducts = (props) => {
                                                     <td>{foodProduct.food_product_id.food_sub_category_id.name}</td>
                                                     <td>{foodProduct.food_product_id.product_name}</td>
                                                     <td>
-                                                        <img src={`http://localhost:8081/images/product_images/`+foodProduct.food_product_id.product_image}  alt={foodProduct.food_product_id.product_image} width="25" height="25"/>
+                                                        <img src={`http://localhost:8081/images/restaurant_product_images/`+foodProduct.product_image}  alt={foodProduct.product_image} width="25" height="25"/>
                                                     </td>
                                                     <td>{foodProduct.status ? "Active" : "Not Active"}</td>
                                                     <td>
