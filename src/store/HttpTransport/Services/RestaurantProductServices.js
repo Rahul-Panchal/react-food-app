@@ -12,12 +12,16 @@ const getAllFoodProducts = id => {
     return http.get(`/restaurant-detail/restaurant-product-list/${id}`);
 };
 
+const getFoodProduct = id => {
+    return http.get(`/restaurant-detail/get-restaurant-product/${id}`);
+};
+
 const create = data => {
     return http.post("/restaurant-detail/add-restaurant-product", data);
 };
 
 const update = (id, data) => {
-    return http.put(`/restaurant-detail/update-restaurant/${id}`, data);
+    return http.put(`/restaurant-detail/update-restaurant-product/${id}`, data);
 };
 
 const remove = id => {
@@ -32,6 +36,7 @@ const RestaurantProductServices = {
     getAll,
     get,
     getAllFoodProducts,
+    getFoodProduct,
     create,
     update,
     remove,

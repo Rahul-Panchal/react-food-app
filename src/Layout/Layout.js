@@ -20,6 +20,8 @@ import AllRestaurantsList from '../components/restaurant/AllRestaurantsList';
 import AddRestaurant from '../components/restaurant/AddRestaurant';
 import EditRestaurant from '../components/restaurant/EditRestaurant';
 import RestaurantFoodProducts from '../components/restaurant/RestaurantFoodProducts';
+import AddRestaurantFoodProduct from '../components/restaurant/AddRestaurantFoodProduct';
+import EditRestaurantFoodProduct from '../components/restaurant/EditRestaurantFoodProduct';
 
 import AddFoodCategory from '../components/food_categories/AddFoodCategory';
 import AllFoodCategoriesList from '../components/food_categories/AllFoodCategoriesList';
@@ -33,7 +35,7 @@ import AddFoodProduct from '../components/food_products/AddFoodProduct';
 import EditFoodProduct from '../components/food_products/EditFoodProduct';
 import AllFoodProducts from '../components/food_products/AllFoodProducts';
 import SelectFoodProducts from '../components/food_products/SelectFoodProducts';
-import AddRestaurantFoodProduct from '../components/food_products/AddRestaurantFoodProduct';
+
 
 
 
@@ -92,7 +94,8 @@ const Layout = (props) => {
                         <Route path="/all-food-products" component={AllFoodProducts} />
                         {/* <Route path="/select-food-products" component={SelectFoodProducts} /> */}
                         <Route path="/select-food-products/:restaurant_id" component={SelectFoodProducts} />
-                        <Route name="add-restaurant-food-product" path="/add-restaurant-food-product/:restaurant_id/:food_product_id" component={AddRestaurantFoodProduct}/>
+                        <Route path="/add-restaurant-food-product/:restaurant_id/:food_product_id" component={AddRestaurantFoodProduct}/>
+                        <Route path="/update-restaurant-food-product/:restaurant_food_product_id" component={EditRestaurantFoodProduct}/>
 
                     </div>
                     <Footer />

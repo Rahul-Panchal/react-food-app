@@ -52,6 +52,21 @@ import RestaurantProductServices from '../../store/HttpTransport/Services/Restau
 
 });
 
+/**
+ * Get one food product as per product id
+ * 
+ * using thunk with async and await
+ */
+ export const getFoodProduct = createAsyncThunk('restaurantProduct/getFoodProduct', async (id) => {
+
+    const {data} = await RestaurantProductServices.getFoodProduct(id);
+
+    console.log('getFoodProduct-response')
+    console.log(data)
+    return data;
+
+});
+
 
 
 /**
@@ -181,6 +196,8 @@ export const getFoodProductStatusList = createAsyncThunk('restaurantProduct/getF
 const restaurantSlice = createSlice({
     name : "restaurantProduct",
     initialState : {
+        food_category_id        : null,
+        food_sub_category_id    : null,
         isReadyForUpdate        : null,
         foodProductStatusList   : null,
         allFoodProducts         : null,
@@ -262,7 +279,15 @@ const restaurantSlice = createSlice({
             console.log(action.payload)
 
             state.allFoodProducts = action.payload;
-            state.isLoaded =  true;
+        },
+        [getFoodProduct.fulfilled]: (state, action) => {
+            console.log('getFoodProduct-extra-reducers')
+            console.log(action.payload)
+
+            state.foodProductDetails = action.payload;
+            state.food_category_id = action.payload.food_product_id.food_category_id;
+            state.food_sub_category_id = action.payload.food_product_id.food_sub_category_id._id;
+            state.isReadyForUpdate =  true;
         },
         [handleSubmitAction.fulfilled] : (state, action) => {
 

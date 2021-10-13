@@ -5,7 +5,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { retrieveAll as getAllUsersList } from '../../redux/features/userSlice';
 
 import { retrieveOne as getRestaurantDetail} from '../../redux/features/restaurantSlice';
-import { getRestaurantFoodProducts as getAllFoodProducts, clearFormData, handleSubmitAction, updateInputDetails, handleImageChange, retrieveAll, retrieveOne, removeOne } from '../../redux/features/restaurantProductSlice';
+import { getRestaurantFoodProducts as getAllFoodProducts, clearFormData, handleSubmitAction, updateInputDetails, handleImageChange, retrieveAll, retrieveOne, removeOne, getFoodProduct } from '../../redux/features/restaurantProductSlice';
 import LazyLoad from 'react-lazyload';
 
 const RestaurantFoodProducts = (props) => {
@@ -25,9 +25,9 @@ const RestaurantFoodProducts = (props) => {
     const allFoodProducts  = useSelector((state) => state.restaurantProduct.allFoodProducts);
     const restaurantDetail = useSelector((state) => state.restaurant.restaurantDetails)
 
-    const handleEditAction = (foodProductId) =>{
-        dispatch(retrieveOne(foodProductId));
-        history.push("/edit-food-product/"+foodProductId);
+    const handleEditAction = (restuarantFoodProductId) =>{
+        dispatch(getFoodProduct(restuarantFoodProductId));
+        history.push("/update-restaurant-food-product/"+restuarantFoodProductId);
     }
 
     const {restaurant_id}  = useParams ();
