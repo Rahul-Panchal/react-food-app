@@ -1,5 +1,10 @@
-import React, { Component, Suspense } from 'react';
+import React, { Component } from 'react';
+import {useSelector} from 'react-redux';
+
 import Leftside from './Leftside';
+import ManagerLeftside from './ManagerLeftside';
+import CustomerLeftside from './CustomerLeftside';
+import FieldBoyLeftside from './FieldBoyLeftside';
 import Header from './Header'
 import Footer from './Footer'
 
@@ -53,12 +58,34 @@ const Layout = (props) => {
 
     // loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
+    const token  = useSelector((state)=>state.login.token);
+    const userType  = useSelector((state)=>state.login.loggedInUserDetails.user_type);
+  
+    const renderSwitch = (userType) => {
+        switch(userType) {
+            case '1':
+                return <Leftside></Leftside>;
+            case '2':
+                return <ManagerLeftside></ManagerLeftside>;
+            case '3':
+                return <FieldBoyLeftside></FieldBoyLeftside>;
+            case '4':
+                return <CustomerLeftside></CustomerLeftside>;
+            default:
+                return <Leftside></Leftside>;
+        }
+    }
+
     return (
         <div>
             <div id="wrapper">
                 {/* <Navbar/> */}
 
-                <Leftside></Leftside>
+
+                
+
+                {renderSwitch(userType)}
+
                 <div id="content-wrapper" className="d-flex flex-column">
                     <div id="content">
                         <Header name={props.name} />
