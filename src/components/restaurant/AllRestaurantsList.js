@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -21,12 +21,14 @@ const AllRestaurantsList = (props) => {
     const dispatch = useDispatch();
     const history = useHistory();
 
+    const [filterData, filterResult] = useState("");
 
     const allRestaurantsList  = useSelector((state) => state.restaurant.allRestaurantsList);
     const countriesList = useSelector((state) => state.restaurant.countriesList);
     const statesList = useSelector((state) => state.restaurant.statesList);
     const citiesList = useSelector((state) => state.restaurant.citiesList);
     const allUsersList = useSelector((state)=> state.user.allUsersList);
+    const userType  = useSelector((state)=>state.login.loggedInUserDetails.user_type);
 
 
     const handleEditAction = (restaurantId) =>{
@@ -49,7 +51,7 @@ const AllRestaurantsList = (props) => {
         // console.log(userDetail);
         // console.log('id :: '+id);
     
-        // console.log('isReadyForUpdate :: ' + isReadyForUpdate);
+        console.log('userType :: ' + userType);
     
     
         dispatch(getCountriesList());
@@ -72,6 +74,14 @@ const AllRestaurantsList = (props) => {
                     <h6 className="m-0 font-weight-bold text-primary">All Restaurants List</h6>
                 </div>
                 <div className="card-body">
+
+                    <div className="form-group row">
+                        <div className="col-sm-3"><label><b>Search</b></label></div>
+                        <div className="col-sm-9">
+                            <input type="text"  name="search" className="form-control" placeholder="Search For...." onChange={(e)=>filterResult(e.target.value)} />
+                        </div>
+                    </div>
+
                     <div className="table-responsive">
                         <table className="table table-bordered" id="dataTable" width="100%" cellSpacing="0">
                             <thead>
@@ -91,7 +101,16 @@ const AllRestaurantsList = (props) => {
                             <tbody>
                                 {
                                     (allRestaurantsList) ?
-                                    allRestaurantsList.map((restaurant, index) => (
+                                    allRestaurantsList.filter( (val)=> {
+                                        if(filterData===''){
+                                            return val;
+                                        } else if(
+                                            val.restaurant_name.toLowerCase().includes(filterData.toLowerCase()) || 
+                                            val.address.toLowerCase().includes(filterData.toLowerCase())
+                                        ) {
+                                            return val;
+                                        }
+                                    }).map((restaurant, index) => (
                                             <LazyLoad key={restaurant._id} placeholder={Loading()}>
                                                 <tr key={restaurant._id}>
                                                     <td>{++index + '.'}</td>
@@ -126,33 +145,38 @@ const AllRestaurantsList = (props) => {
                                                     }
                                                     </td>
                                                     <td>
-                                                        <span className="btn btn-primary btn-circle btn-sm" onClick={() => handleEditAction(restaurant._id)}>
-                                                            <i className="fas fa-pencil-alt"></i>
-                                                        </span>
-                                                        
-                                    
+                                                    {
+                                                        (['1','2'].includes(userType)) ?
+                                                            <>
+                                                            <span className="btn btn-primary btn-circle btn-sm" onClick={() => handleEditAction(restaurant._id)}>
+                                                                <i className="fas fa-pencil-alt"></i>
+                                                            </span>
 
-                                                        <button className="btn btn-danger btn-circle btn-sm" onClick={() => {
-                                                                const confirmBox = window.confirm(
-                                                                "Do you really want to change active status of this Restaurant ?"
-                                                                )
-                                                                if (confirmBox === true) {
-                                                                    dispatch(removeOne(restaurant._id))
-                                                                }
-                                                            }}>
-                                                            <i className="fas fa-trash"></i>
-                                                        </button>
+                                                            <button className="btn btn-danger btn-circle btn-sm" onClick={() => {
+                                                                    const confirmBox = window.confirm(
+                                                                    "Do you really want to change active status of this Restaurant ?"
+                                                                    )
+                                                                    if (confirmBox === true) {
+                                                                        dispatch(removeOne(restaurant._id))
+                                                                    }
+                                                                }}>
+                                                                <i className="fas fa-trash"></i>
+                                                            </button>
 
-                                                        <span className="btn btn-primary btn-circle btn-sm" onClick={() => addFoodProductsAction(restaurant._id)}>
-                                                            <i className="fas fa-plus-square" title="Add Food Products"></i>
-                                                        </span>
+                                                            <span className="btn btn-primary btn-circle btn-sm" onClick={() => addFoodProductsAction(restaurant._id)}>
+                                                                <i className="fas fa-plus-square" title="Add Food Products"></i>
+                                                            </span>
 
-                                                        <span className="btn btn-primary btn-circle btn-sm" onClick={() => viewFoodProductsAction(restaurant._id)}>
-                                                            <i className="fa fa-list-ol" title="view Restaurant Food Products"></i>
-                                                        </span>
+                                                            <span className="btn btn-primary btn-circle btn-sm" onClick={() => viewFoodProductsAction(restaurant._id)}>
+                                                                <i className="fa fa-list-ol" title="view Restaurant Food Products"></i>
+                                                            </span>
 
-
-
+                                                            </>
+                                                        :
+                                                            <span className="btn btn-primary btn-circle btn-sm" onClick={() => viewFoodProductsAction(restaurant._id)}>
+                                                                <i className="fa fa-list-ol" title="view Restaurant Food Products"></i>
+                                                            </span>
+                                                    }
                                                     </td>
                                                 </tr>
                                             </LazyLoad>

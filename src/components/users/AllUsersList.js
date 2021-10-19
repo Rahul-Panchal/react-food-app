@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
 // import LazyLoad from 'react-lazyload';
@@ -8,8 +8,9 @@ import { connect } from 'react-redux';
 import { Link, useHistory } from "react-router-dom";
 
 
-import { retrieveAll,retrieveOne, removeOne, getStateList, getCitiesList, getUserStatusList,getUserTypesList } from '../../redux/features/userSlice';
+import {retrieveAll,retrieveOne, removeOne, getStateList, getCitiesList, getUserStatusList,getUserTypesList } from '../../redux/features/userSlice';
 
+import HeaderSearch from '../../Layout/HeaderSearch'; 
 
 const AllUsersList = (props) => {
 
@@ -23,13 +24,16 @@ const AllUsersList = (props) => {
     const userStatusList = useSelector((state)=> state.user.userStatusList);
     const userTypesList = useSelector((state)=> state.user.userTypesList);
 
+    const [filterData, filterResult] = useState("");
+
     useEffect(()=>{
 
-        dispatch(retrieveAll());
-        dispatch(getStateList());
-        dispatch(getCitiesList());
         dispatch(getUserStatusList());
         dispatch(getUserTypesList());
+        dispatch(getStateList());
+        dispatch(getCitiesList());
+        dispatch(retrieveAll());
+        
 
     },[isLoaded]);
 
@@ -49,6 +53,14 @@ const AllUsersList = (props) => {
                         <h6 className="m-0 font-weight-bold text-primary">DataTables Example</h6>
                     </div>
                     <div className="card-body">
+
+                        <div className="form-group row">
+                            <div className="col-sm-3"><label><b>Search</b></label></div>
+                            <div className="col-sm-9">
+                                <input type="text"  name="search" className="form-control" placeholder="Search For...." onChange={(e)=>filterResult(e.target.value)} />
+                            </div>
+                        </div>
+
                         <div className="table-responsive">
                             <table className="table table-bordered" id="dataTable" width="100%" cellSpacing="0">
                                 <thead>
@@ -70,7 +82,16 @@ const AllUsersList = (props) => {
                                 <tbody>
                                     {
                                         (usersList) ?
-                                            usersList.map((user, index) => (
+                                            usersList.filter( (val)=> {
+                                                if(filterData===''){
+                                                    return val;
+                                                } else if(
+                                                    val.name.toLowerCase().includes(filterData.toLowerCase()) || 
+                                                    val.email_id.toLowerCase().includes(filterData.toLowerCase())
+                                                ) {
+                                                    return val;
+                                                }
+                                            }).map((user, index) => (
                                                 // <LazyLoad key={user._id} placeholder={this.Loading()}>
                                                     <tr key={user._id}>
                                                         <td>{++index + '.'}</td>

@@ -281,7 +281,7 @@ const userSlice = createSlice({
                 pin_code        : "",
                 country_id      : "",
             }
-        }
+        },
     },
     extraReducers : {
         [retrieveAll.fulfilled]: (state, action) => {
